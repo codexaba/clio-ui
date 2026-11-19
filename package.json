@@ -4,7 +4,7 @@
   "description": "Clio marketing site — static single-page app hosted on AWS Amplify",
   "type": "module",
   "scripts": {
-    "test": "node --test tests/",
+    "test": "node --test \"tests/**/*.test.mjs\"",
     "serve": "node tools/serve.mjs"
   },
   "engines": {
