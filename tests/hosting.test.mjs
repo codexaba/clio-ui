@@ -42,7 +42,7 @@ test('customHttp.yml carries the agreed security headers for every path', () => 
   assert.equal(http.customHeaders[0].pattern, '**');
   const h = Object.fromEntries(http.customHeaders[0].headers.map(({ key, value }) => [key, value]));
   assert.deepEqual(h, {
-    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+    'Strict-Transport-Security': 'max-age=31536000',
     'Content-Security-Policy': CSP,
     'X-Content-Type-Options': 'nosniff',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
@@ -86,7 +86,7 @@ test('server serves assets with their own type', async () => {
 test('server sends the security headers on the root document', async () => {
   const res = await fetch(`${base}/`);
   assert.equal(res.headers.get('content-security-policy'), CSP);
-  assert.equal(res.headers.get('strict-transport-security'), 'max-age=31536000; includeSubDomains');
+  assert.equal(res.headers.get('strict-transport-security'), 'max-age=31536000');
 });
 
 test('headerEntries refuses header patterns the local server cannot mirror', () => {

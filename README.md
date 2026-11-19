@@ -59,7 +59,7 @@ Live at **https://main.d2a42wejtxhcdd.amplifyapp.com** — Amplify app `clio-ui`
 ### Headers
 
 `customHttp.yml` at the repo root is read on every build and adds the security
-headers (HSTS, Content-Security-Policy, no framing, nosniff, referrer policy).
+headers (HSTS (no includeSubDomains until every clioaba.com subdomain is HTTPS), Content-Security-Policy, no framing, nosniff, referrer policy).
 It is written in JSON syntax, which is valid YAML, so the local server and the
 tests can read the same file. If you ever add a third-party script, image host
 or font, add its origin to the Content-Security-Policy or the browser will
