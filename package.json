@@ -8,6 +8,6 @@
     "serve": "node tools/serve.mjs"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   }
 }

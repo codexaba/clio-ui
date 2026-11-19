@@ -23,8 +23,13 @@ test('asset URLs are absolute so deep paths load them', () => {
   assert.match(html, /src="\/assets\/clio-logo\.png"/);
 });
 
-test('page declares a canonical link', () => {
-  assert.match(html, /<link rel="canonical" href="\/">/);
+test('page has no static canonical (app.js sets it per view, so crawlers are not told every path is home)', () => {
+  assert.doesNotMatch(html, /rel="canonical"/);
+});
+
+test('package.json requires a Node version whose test runner accepts globs', () => {
+  const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+  assert.equal(pkg.engines.node, '>=22');
 });
 
 test('every internal route link points at a known view', () => {

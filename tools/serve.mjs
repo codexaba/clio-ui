@@ -33,9 +33,21 @@ function loadRewrite() {
   return { re: new RegExp(rule.source.slice(2, -2)), target: rule.target };
 }
 
+// Only the "**" pattern (every response) is mirrored. Anything else would be
+// silently applied everywhere here while Amplify applies it more narrowly, so
+// refuse it instead of pretending to cover it.
+export function headerEntries(customHeaders) {
+  return customHeaders.flatMap((block) => {
+    if (block.pattern !== '**') {
+      throw new Error(`customHttp.yml pattern ${JSON.stringify(block.pattern)} is not supported by the local server; use "**"`);
+    }
+    return block.headers.map(({ key, value }) => [key, value]);
+  });
+}
+
 function loadHeaders() {
   const { customHeaders } = JSON.parse(readFileSync(resolve(REPO, 'customHttp.yml'), 'utf8'));
-  return customHeaders.flatMap((block) => block.headers.map(({ key, value }) => [key, value]));
+  return headerEntries(customHeaders);
 }
 
 function isFile(path) {

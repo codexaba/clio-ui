@@ -2,7 +2,7 @@ import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { createServer } from '../tools/serve.mjs';
+import { createServer, headerEntries } from '../tools/serve.mjs';
 
 const repo = fileURLToPath(new URL('..', import.meta.url));
 const rules = JSON.parse(readFileSync(new URL('../amplify/custom-rules.json', import.meta.url), 'utf8'));
@@ -39,7 +39,7 @@ test('rewrite regex leaves files alone', () => {
 
 test('customHttp.yml carries the agreed security headers for every path', () => {
   assert.equal(http.customHeaders.length, 1);
-  assert.equal(http.customHeaders[0].pattern, '**/*');
+  assert.equal(http.customHeaders[0].pattern, '**');
   const h = Object.fromEntries(http.customHeaders[0].headers.map(({ key, value }) => [key, value]));
   assert.deepEqual(h, {
     'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
@@ -81,6 +81,17 @@ test('server serves assets with their own type', async () => {
   const js = await fetch(`${base}/assets/router.js`);
   assert.equal(js.status, 200);
   assert.match(js.headers.get('content-type'), /^text\/javascript/);
+});
+
+test('server sends the security headers on the root document', async () => {
+  const res = await fetch(`${base}/`);
+  assert.equal(res.headers.get('content-security-policy'), CSP);
+  assert.equal(res.headers.get('strict-transport-security'), 'max-age=31536000; includeSubDomains');
+});
+
+test('headerEntries refuses header patterns the local server cannot mirror', () => {
+  assert.throws(() => headerEntries([{ pattern: '**/*', headers: [{ key: 'X-A', value: '1' }] }]), /pattern/);
+  assert.deepEqual(headerEntries([{ pattern: '**', headers: [{ key: 'X-A', value: '1' }] }]), [['X-A', '1']]);
 });
 
 test('server returns 404 for a missing file', async () => {

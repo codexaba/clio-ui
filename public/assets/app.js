@@ -14,7 +14,9 @@ order.forEach(function(k,i){
   views[k].appendChild(w);
 });
 var descMeta=document.querySelector('meta[name="description"]');
-var canonical=document.querySelector('link[rel="canonical"]');
+// Canonical is created here, not in index.html: every path is served the same
+// HTML, and a static canonical would tell crawlers each view duplicates "/".
+var canonical=document.createElement("link");canonical.rel="canonical";document.head.appendChild(canonical);
 if("scrollRestoration" in history)history.scrollRestoration="manual";
 function route(moveFocus){
   var loc=parseLocation(location.pathname,location.hash);
@@ -26,7 +28,7 @@ function route(moveFocus){
   var meta=metaFor(k);
   document.title=meta.title;
   if(descMeta)descMeta.setAttribute("content",meta.description);
-  if(canonical)canonical.setAttribute("href",location.origin+pathFor(k));
+  canonical.setAttribute("href",location.origin+pathFor(k));
   window.scrollTo(0,0);
   if(moveFocus){
     var h=views[k].querySelector("h1,h2");

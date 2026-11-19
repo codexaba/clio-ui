@@ -20,7 +20,7 @@ Marketing site for Clio, note review for ABA agencies. It is one static page
 
 ## Work on it locally
 
-Requires Node 20 or newer.
+Requires Node 22 or newer (for `npm test`; the site itself needs no Node).
 
 ```sh
 npm run serve     # http://localhost:8090
@@ -67,5 +67,9 @@ block it.
 
 - `https://<your-domain>/security` loads directly and after a reload.
 - `https://<your-domain>/#/faq` ends up at `/faq`.
-- Response headers include `content-security-policy` (browser dev tools →
-  Network → the document request).
+- Security headers are on both the root and a rewritten page:
+
+  ```sh
+  curl -sI https://<your-domain>/ | grep -i content-security-policy
+  curl -sI https://<your-domain>/security | grep -i content-security-policy
+  ```
