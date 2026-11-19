@@ -1,0 +1,13 @@
+{
+  "name": "clio-ui",
+  "private": true,
+  "description": "Clio marketing site — static single-page app hosted on AWS Amplify",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/",
+    "serve": "node tools/serve.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
