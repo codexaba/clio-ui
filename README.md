@@ -29,7 +29,9 @@ npm test
 
 ## Deploy on AWS Amplify
 
-Every push to `main` redeploys the site once the app is connected.
+Live at **https://main.d2a42wejtxhcdd.amplifyapp.com** — Amplify app `clio-ui`
+(`d2a42wejtxhcdd`), AWS account `codexaba`, region `us-east-1`. Every push to
+`main` redeploys it; the rewrite rule below is already applied.
 
 ### First-time setup (AWS console)
 
