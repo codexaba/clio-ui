@@ -113,3 +113,21 @@ test('amplify.yml publishes public/ with no build step', () => {
   assert.match(spec, /^\s+- '\*\*\/\*'$/m);
   assert.doesNotMatch(spec, /npm (ci|install)/);
 });
+
+test('sitemap lists every view on https://clioaba.com', async () => {
+  const { VIEWS, pathFor } = await import('../public/assets/router.js');
+  const res = await fetch(`${base}/sitemap.xml`);
+  assert.equal(res.status, 200);
+  assert.match(res.headers.get('content-type'), /xml/);
+  const locs = [...(await res.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  assert.deepEqual(locs, VIEWS.map((v) => `https://clioaba.com${pathFor(v)}`));
+});
+
+test('robots.txt allows crawling and points at the sitemap', async () => {
+  const res = await fetch(`${base}/robots.txt`);
+  assert.equal(res.status, 200);
+  const body = await res.text();
+  assert.match(body, /^User-agent: \*$/m);
+  assert.match(body, /^Allow: \/$/m);
+  assert.match(body, /^Sitemap: https:\/\/clioaba\.com\/sitemap\.xml$/m);
+});

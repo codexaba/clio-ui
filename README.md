@@ -56,6 +56,14 @@ Live at **https://main.d2a42wejtxhcdd.amplifyapp.com** — Amplify app `clio-ui`
    the records for you; otherwise it shows the CNAME records to add at your
    DNS provider.
 
+### Domain and DNS
+
+`clioaba.com` is registered at Squarespace. Its DNS is hosted in Route 53
+(account `codexaba`, zone `Z01523631YH9QLO9W6R4`), which also carries the
+Google Workspace mail records (MX, SPF, site verification, DKIM). The site is
+served at `https://clioaba.com`, with `www` redirecting to it.
+`public/sitemap.xml` and `public/robots.txt` use that address.
+
 ### Headers
 
 `customHttp.yml` at the repo root is read on every build and adds the security
