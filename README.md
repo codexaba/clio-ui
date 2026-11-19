@@ -27,6 +27,45 @@ npm run serve     # http://localhost:8090
 npm test
 ```
 
-## Deploy
+## Deploy on AWS Amplify
 
-See the "Deploy on AWS Amplify" section below.
+Every push to `main` redeploys the site once the app is connected.
+
+### First-time setup (AWS console)
+
+1. Open **AWS Amplify** → **Create new app** → **GitHub**, and authorize
+   Amplify for the `codexaba` organization when GitHub asks.
+2. Pick repository **codexaba/clio-ui**, branch **main**.
+3. On the build settings screen Amplify should detect `amplify.yml`
+   (publishes `public/`, no build). Leave the framework as "None".
+4. Save and deploy. The first build gives you a `https://main.<id>.amplifyapp.com` address.
+5. **Hosting → Rewrites and redirects → Manage → JSON**: paste the contents of
+   `amplify/custom-rules.json` and save. Without this rule, reloading
+   `/security` returns a 404.
+
+   Or from the command line, with working AWS credentials:
+
+   ```sh
+   aws amplify update-app --app-id <app-id> --custom-rules file://amplify/custom-rules.json
+   ```
+
+6. **Hosting → Custom domains → Add domain** to point your domain at the app.
+   Amplify issues the HTTPS certificate. If DNS is in Route 53 it configures
+   the records for you; otherwise it shows the CNAME records to add at your
+   DNS provider.
+
+### Headers
+
+`customHttp.yml` at the repo root is read on every build and adds the security
+headers (HSTS, Content-Security-Policy, no framing, nosniff, referrer policy).
+It is written in JSON syntax, which is valid YAML, so the local server and the
+tests can read the same file. If you ever add a third-party script, image host
+or font, add its origin to the Content-Security-Policy or the browser will
+block it.
+
+### After deploying, check
+
+- `https://<your-domain>/security` loads directly and after a reload.
+- `https://<your-domain>/#/faq` ends up at `/faq`.
+- Response headers include `content-security-policy` (browser dev tools →
+  Network → the document request).

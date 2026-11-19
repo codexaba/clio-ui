@@ -94,3 +94,11 @@ test('server never serves files outside the site root', async () => {
   const res2 = await fetch(`${base}/assets/..%2F..%2Fpackage.json`);
   assert.notEqual(res2.status, 200);
 });
+
+test('amplify.yml publishes public/ with no build step', () => {
+  const spec = readFileSync(new URL('../amplify.yml', import.meta.url), 'utf8');
+  assert.match(spec, /^version: 1$/m);
+  assert.match(spec, /^\s+baseDirectory: public$/m);
+  assert.match(spec, /^\s+- '\*\*\/\*'$/m);
+  assert.doesNotMatch(spec, /npm (ci|install)/);
+});
