@@ -1,5 +1,10 @@
 [
   {
+    "source": "https://www.clioaba.com",
+    "target": "https://clioaba.com",
+    "status": "301"
+  },
+  {
     "source": "</^[^.]+$|\\.(?!(css|gif|ico|jpg|jpeg|js|mjs|png|txt|svg|woff|woff2|ttf|map|json|webp|xml|webmanifest)$)([^.]+$)/>",
     "target": "/index.html",
     "status": "200"

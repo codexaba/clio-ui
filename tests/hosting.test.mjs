@@ -13,16 +13,22 @@ const CSP =
   "font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'; " +
   "form-action 'none'; frame-ancestors 'none'; object-src 'none'";
 
+const spaRule = () => rules[rules.length - 1];
+
 function ruleRegex() {
-  const src = rules[0].source;
+  const src = spaRule().source;
   assert.ok(src.startsWith('</') && src.endsWith('/>'), 'Amplify regex rules are wrapped in </ ... />');
   return new RegExp(src.slice(2, -2));
 }
 
-test('the single rewrite rule sends paths to /index.html with status 200', () => {
-  assert.equal(rules.length, 1);
-  assert.equal(rules[0].target, '/index.html');
-  assert.equal(rules[0].status, '200');
+test('www redirects permanently to the apex domain, before the SPA rewrite', () => {
+  assert.equal(rules.length, 2);
+  assert.deepEqual(rules[0], { source: 'https://www.clioaba.com', target: 'https://clioaba.com', status: '301' });
+});
+
+test('the last rule rewrites paths to /index.html with status 200', () => {
+  assert.equal(spaRule().target, '/index.html');
+  assert.equal(spaRule().status, '200');
 });
 
 test('rewrite regex matches page paths', () => {

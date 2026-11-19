@@ -28,8 +28,11 @@ const TYPES = {
   '.xml': 'application/xml; charset=utf-8',
 };
 
+// Host redirects (https://www... -> https://...) only apply on the real domain,
+// so the local server mirrors just the SPA rewrite rule.
 function loadRewrite() {
-  const [rule] = JSON.parse(readFileSync(resolve(REPO, 'amplify/custom-rules.json'), 'utf8'));
+  const rules = JSON.parse(readFileSync(resolve(REPO, 'amplify/custom-rules.json'), 'utf8'));
+  const rule = rules.find((r) => r.source.startsWith('</') && r.status === '200');
   return { re: new RegExp(rule.source.slice(2, -2)), target: rule.target };
 }
 
