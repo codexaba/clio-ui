@@ -77,6 +77,7 @@ export function parseLocation(pathname, hash) {
 
 export function routeFromHref(href, origin) {
   if (!href) return null;
+  if (href.startsWith('#') && !href.startsWith('#/')) return null; // in-page anchor
   let url;
   try {
     url = new URL(href, origin + '/');

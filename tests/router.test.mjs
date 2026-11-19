@@ -57,6 +57,12 @@ test('routeFromHref leaves other links to the browser', () => {
   assert.equal(routeFromHref('', o), null);
 });
 
+test('routeFromHref leaves plain in-page anchors to the browser', () => {
+  const o = 'https://clio.example';
+  assert.equal(routeFromHref('#top', o), null);
+  assert.equal(routeFromHref('#', o), null);
+});
+
 test('metaFor gives every view a Clio title and a short description', () => {
   for (const v of VIEWS.filter((x) => x !== 'home')) {
     const m = metaFor(v);
