@@ -44,3 +44,41 @@ test('every internal route link points at a known view', () => {
 test('every view has a container in the page', () => {
   for (const v of VIEWS) assert.match(html, new RegExp(`data-view="${v}"`), v);
 });
+
+// Responsive layout. The header nav wraps to a second row below 980px, so the
+// header must grow with it; a fixed height lets the links spill over the hero.
+const css = html.match(/<style>([\s\S]*?)<\/style>/)[1];
+function mediaBlock(query) {
+  const start = css.indexOf(`@media (${query}){`);
+  assert.ok(start >= 0, `missing @media (${query})`);
+  let depth = 0;
+  for (let i = css.indexOf('{', start); i < css.length; i++) {
+    if (css[i] === '{') depth++;
+    else if (css[i] === '}' && --depth === 0) return css.slice(start, i + 1);
+  }
+  throw new Error(`unclosed @media (${query})`);
+}
+
+test('on phones the header height follows its wrapped nav row', () => {
+  for (const q of ['max-width:560px', 'max-width:420px']) {
+    assert.doesNotMatch(mediaBlock(q), /\.nav\{[^}]*\bheight:\s*\d/, q);
+  }
+});
+
+test('home never locks page scrolling, so a hero taller than the screen stays reachable', () => {
+  assert.doesNotMatch(css, /body\.is-home\{[^}]*overflow:\s*hidden/);
+});
+
+test('phone gutters set only the sides, keeping the wrapped nav its top padding', () => {
+  for (const q of ['max-width:560px', 'max-width:420px']) {
+    assert.doesNotMatch(mediaBlock(q), /\.wrap\{[^}]*\bpadding:/, q);
+  }
+});
+
+test('the hero strip spans the full width (margin:auto in the flex hero would shrink it)', () => {
+  assert.match(css, /\.strip\{[^}]*\bwidth:100%/);
+});
+
+test('on phones the sheet caption sits above the sheet instead of overlapping it', () => {
+  assert.match(mediaBlock('max-width:560px'), /\.tagline\{[^}]*position:static/);
+});
